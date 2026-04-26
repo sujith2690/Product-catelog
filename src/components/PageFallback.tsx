@@ -2,7 +2,7 @@ import { Skeleton } from './ui/skeleton'
 
 export function PageFallback() {
   return (
-    <div className="space-y-6">
+    <div className="container mx-auto max-w-7xl px-5 py-8 md:px-8 space-y-6">
       {/* Hero skeleton */}
       <div className="overflow-hidden rounded-lg border border-white/10 bg-white/5 p-7 backdrop-blur-xl sm:p-10">
         <div className="space-y-4">
