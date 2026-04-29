@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Link, useOutletContext, useParams } from 'react-router-dom'
+import { Link, useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import { ArrowLeft, Heart } from 'lucide-react'
 
 import type { CatalogContextValue } from '../app/catalogContext'
@@ -17,6 +17,7 @@ import { useRecentlyViewed } from '../hooks/useRecentlyViewed'
 export default function ItemDetailPage() {
   const { items, toggleFavorite, isFavorite } = useOutletContext<CatalogContextValue>()
   const params = useParams()
+  const navigate = useNavigate()
 
   const itemSlug = params.itemSlug ?? ''
   const categorySlug = params.category ?? ''
@@ -33,6 +34,11 @@ export default function ItemDetailPage() {
     pushRecent(item.id)
   }, [item, pushRecent])
 
+  const similar = React.useMemo(() => {
+    if (!item) return []
+    return items.filter((x) => x.categorySlug === item.categorySlug && x.id !== item.id).slice(0, 8)
+  }, [item, items])
+
   if (!item) {
     return (
       <div className="space-y-4">
@@ -41,16 +47,13 @@ export default function ItemDetailPage() {
           title="Item not found"
           description="The item you’re looking for doesn’t exist (or the URL is invalid)."
           actionLabel="Back to home"
-          onAction={() => (window.location.href = '/')}
+          onAction={() => navigate('/')}
         />
       </div>
     )
   }
 
   const fav = isFavorite(item.id)
-  const similar = React.useMemo(() => {
-    return items.filter((x) => x.categorySlug === item.categorySlug && x.id !== item.id).slice(0, 8)
-  }, [item.categorySlug, item.id, items])
 
   return (
     <div className="space-y-4">

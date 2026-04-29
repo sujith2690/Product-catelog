@@ -24,18 +24,12 @@ export function CategorySection({
   onToggleViewAll,
 }: Props) {
   const scrollRef = React.useRef<HTMLDivElement>(null)
-  const [displayItems, setDisplayItems] = React.useState<CatalogItem[]>(items)
-
-  React.useEffect(() => {
-    setDisplayItems(items)
-  }, [items])
 
   const scrollLeft = () => {
     if (scrollRef.current) {
-      const { scrollLeft, scrollWidth } = scrollRef.current
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current
       if (scrollLeft <= 5) {
-        // Loop back to the end
-        scrollRef.current.scrollTo({ left: scrollWidth, behavior: 'smooth' })
+        scrollRef.current.scrollTo({ left: Math.max(0, scrollWidth - clientWidth), behavior: 'smooth' })
       } else {
         scrollRef.current.scrollBy({ left: -300, behavior: 'smooth' })
       }
@@ -44,23 +38,13 @@ export function CategorySection({
 
   const scrollRight = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: 300, behavior: 'smooth' })
-    }
-  }
-
-  const handleScroll = () => {
-    if (!scrollRef.current || items.length === 0) return
-    const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current
-    
-    // Only handle infinite scroll if there is content to scroll
-    if (scrollWidth <= clientWidth) return
-
-    // Append more items when getting close to the right edge
-    if (scrollLeft + clientWidth >= scrollWidth - 600) {
-      setDisplayItems((prev) => {
-        if (prev.length > 500) return prev
-        return [...prev, ...items]
-      })
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current
+      const maxLeft = Math.max(0, scrollWidth - clientWidth)
+      if (scrollLeft >= maxLeft - 5) {
+        scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' })
+      } else {
+        scrollRef.current.scrollBy({ left: 300, behavior: 'smooth' })
+      }
     }
   }
 
@@ -95,11 +79,10 @@ export function CategorySection({
       <div className="relative">
         <div 
           ref={scrollRef}
-          onScroll={handleScroll}
           className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
-          {displayItems.map((item, idx) => (
-            <div key={`${item.id}-${idx}`} className="w-[260px] shrink-0 snap-start sm:w-[280px]">
+          {items.map((item, idx) => (
+            <div key={item.id} className="w-[260px] shrink-0 snap-start sm:w-[280px]">
               <ItemCard
                 item={item}
                 query={query}

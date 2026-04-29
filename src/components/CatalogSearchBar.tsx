@@ -16,19 +16,18 @@ type Props = {
 
 export function CatalogSearchBar({ categories }: Props) {
   const { state, setState, reset } = useCatalogQueryParams()
-
   const [draftQuery, setDraftQuery] = React.useState(state.query)
   const debouncedQuery = useDebouncedValue(draftQuery, 250)
 
   React.useEffect(() => {
-    setDraftQuery(state.query)
-  }, [state.query])
-
-  React.useEffect(() => {
     if (debouncedQuery === state.query) return
     setState({ query: debouncedQuery })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedQuery])
+  }, [debouncedQuery, setState, state.query])
+
+  const handleClear = React.useCallback(() => {
+    reset()
+    setDraftQuery('')
+  }, [reset])
 
   return (
     <Card className="border-white/10 bg-white/5 backdrop-blur-xl" data-aos="fade-up">
@@ -75,7 +74,7 @@ export function CatalogSearchBar({ categories }: Props) {
                 <Heart className={cn(state.favorites && 'fill-current')} />
               </Button>
 
-              <Button type="button" variant="outline" onClick={reset} className="bg-white/5 border-white/10 shrink-0">
+              <Button type="button" variant="outline" onClick={handleClear} className="bg-white/5 border-white/10 shrink-0">
                 Clear
               </Button>
             </div>

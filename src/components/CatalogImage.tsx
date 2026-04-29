@@ -8,11 +8,8 @@ type Props = {
 }
 
 export function CatalogImage({ src, alt, className, loading = 'lazy' }: Props) {
-  const [hasError, setHasError] = React.useState(false)
-
-  React.useEffect(() => {
-    setHasError(false)
-  }, [src])
+  const [errorSrc, setErrorSrc] = React.useState<string | null>(null)
+  const hasError = errorSrc === src
 
   if (hasError) {
     return (
@@ -29,7 +26,7 @@ export function CatalogImage({ src, alt, className, loading = 'lazy' }: Props) {
       loading={loading}
       referrerPolicy="no-referrer"
       className={className}
-      onError={() => setHasError(true)}
+      onError={() => setErrorSrc(src)}
     />
   )
 }

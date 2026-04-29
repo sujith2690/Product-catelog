@@ -33,9 +33,10 @@ export default function HomePage() {
   const page = Math.max(1, Number(searchParams.get('page') ?? '1') || 1)
   const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
   const safePage = Math.min(page, pageCount)
+  const pageParam = searchParams.get('page')
 
   React.useEffect(() => {
-    if (!hasActiveFilters && searchParams.get('page')) {
+    if (!hasActiveFilters && pageParam) {
       const next = new URLSearchParams(searchParams)
       next.delete('page')
       setSearchParams(next, { replace: true })
@@ -48,14 +49,14 @@ export default function HomePage() {
       else next.set('page', String(safePage))
       setSearchParams(next, { replace: true })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasActiveFilters, safePage])
+  }, [hasActiveFilters, page, pageParam, safePage, searchParams, setSearchParams])
 
   const pagedItems = hasActiveFilters
     ? filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE)
     : filtered
 
   const grouped = React.useMemo(() => groupByCategory(items), [items])
+  const groupedPagedItems = React.useMemo(() => groupByCategory(pagedItems), [pagedItems])
   const [expanded, setExpanded] = React.useState<Record<string, boolean>>({})
 
   return (
@@ -101,7 +102,7 @@ export default function HomePage() {
             ) : (
               <>
                 <div className="space-y-6">
-                  {groupByCategory(pagedItems).map((cat) => (
+                  {groupedPagedItems.map((cat) => (
                     <CategorySection
                       key={cat.slug}
                       title={cat.name}

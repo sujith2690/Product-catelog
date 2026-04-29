@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useOutletContext } from 'react-router-dom'
+import { useNavigate, useOutletContext } from 'react-router-dom'
 
 import type { CatalogContextValue } from '../app/catalogContext'
 import { CategorySection } from '../components/CategorySection'
@@ -9,6 +9,7 @@ import { groupByCategory } from '../utils/catalogSelectors'
 export default function FavoritesPage() {
   const { items, favoriteIds, toggleFavorite, isFavorite } =
     useOutletContext<CatalogContextValue>()
+  const navigate = useNavigate()
 
   const favoriteItems = React.useMemo(
     () => items.filter((i) => favoriteIds.has(i.id)),
@@ -31,7 +32,7 @@ export default function FavoritesPage() {
           title="No favorites yet"
           description="Tap the heart icon on any item to save it here."
           actionLabel="Browse catalog"
-          onAction={() => (window.location.href = '/')}
+          onAction={() => navigate('/')}
         />
       ) : (
         <div className="space-y-6">

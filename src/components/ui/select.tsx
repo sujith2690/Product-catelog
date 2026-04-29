@@ -4,9 +4,17 @@ import { Check, ChevronDown } from 'lucide-react'
 
 import { cn } from '../../lib/utils'
 
-export const Select = SelectPrimitive.Root
-export const SelectValue = SelectPrimitive.Value
-export const SelectGroup = SelectPrimitive.Group
+export function Select(props: React.ComponentPropsWithoutRef<typeof SelectPrimitive.Root>) {
+  return <SelectPrimitive.Root {...props} />
+}
+
+export function SelectValue(props: React.ComponentPropsWithoutRef<typeof SelectPrimitive.Value>) {
+  return <SelectPrimitive.Value {...props} />
+}
+
+export function SelectGroup(props: React.ComponentPropsWithoutRef<typeof SelectPrimitive.Group>) {
+  return <SelectPrimitive.Group {...props} />
+}
 
 export function SelectTrigger({
   className,
@@ -47,7 +55,7 @@ export function SelectContent({
         )}
         {...props}
       >
-        <SelectPrimitive.Viewport className="p-1">
+        <SelectPrimitive.Viewport className="flex flex-col gap-1.5 p-1">
           {children}
         </SelectPrimitive.Viewport>
       </SelectPrimitive.Content>
@@ -64,7 +72,8 @@ export function SelectItem({
     <SelectPrimitive.Item
       className={cn(
         'relative flex w-full cursor-default select-none items-center rounded-sm py-2 pl-9 pr-3 text-base outline-none',
-        'focus:bg-white/10 data-[state=checked]:bg-white/10',
+        'focus:bg-slate-300 dark:focus:bg-white/10 data-[state=checked]:bg-slate-200 dark:data-[state=checked]:bg-white/10',
+      //  'focus:bg-white/10 data-[state=checked]:bg-white/10',
         className,
       )}
       {...props}
