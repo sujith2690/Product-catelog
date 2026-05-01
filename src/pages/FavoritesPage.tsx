@@ -38,7 +38,7 @@ export default function FavoritesPage() {
         <div className="space-y-6">
           {grouped.map((cat) => (
             <CategorySection
-              key={cat.slug}
+              key={`${cat.slug}-${cat.items.map((i) => i.id).join('|')}`}
               title={cat.name}
               items={cat.items}
               isFavorite={isFavorite}

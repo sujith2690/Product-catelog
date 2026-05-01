@@ -11,7 +11,6 @@ import { Button } from '../components/ui/button'
 import { filterItems, groupByCategory } from '../utils/catalogSelectors'
 import { useCatalogQueryParams } from '../hooks/useCatalogQueryParams'
 
-const PREVIEW_COUNT = 4
 const PAGE_SIZE = 12
 
 export default function HomePage() {
@@ -57,7 +56,6 @@ export default function HomePage() {
 
   const grouped = React.useMemo(() => groupByCategory(items), [items])
   const groupedPagedItems = React.useMemo(() => groupByCategory(pagedItems), [pagedItems])
-  const [expanded, setExpanded] = React.useState<Record<string, boolean>>({})
 
   return (
     <div className="space-y-6">
@@ -104,7 +102,7 @@ export default function HomePage() {
                 <div className="space-y-6">
                   {groupedPagedItems.map((cat) => (
                     <CategorySection
-                      key={cat.slug}
+                      key={`${cat.slug}-${cat.items.map((i) => i.id).join('|')}`}
                       title={cat.name}
                       items={cat.items}
                       query={state.query}
@@ -127,25 +125,16 @@ export default function HomePage() {
             )}
           </div>
         ) : (
-          grouped.map((cat) => {
-            const isOpen = expanded[cat.slug] ?? false
-            const visible = isOpen ? cat.items : cat.items.slice(0, PREVIEW_COUNT)
-
-            return (
-              <CategorySection
-                key={cat.slug}
-                title={cat.name}
-                items={visible}
-                query={state.query}
-                isFavorite={isFavorite}
-                onToggleFavorite={toggleFavorite}
-                viewAll={isOpen}
-                onToggleViewAll={() =>
-                  setExpanded((prev) => ({ ...prev, [cat.slug]: !isOpen }))
-                }
-              />
-            )
-          })
+          grouped.map((cat) => (
+            <CategorySection
+              key={`${cat.slug}-${cat.items.map((i) => i.id).join('|')}`}
+              title={cat.name}
+              items={cat.items}
+              query={state.query}
+              isFavorite={isFavorite}
+              onToggleFavorite={toggleFavorite}
+            />
+          ))
         )}
       </div>
     </div>
